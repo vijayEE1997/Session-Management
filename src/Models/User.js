@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 
 const userSchema = new mongoose.Schema( {
     firstName: {
@@ -35,10 +36,63 @@ const userSchema = new mongoose.Schema( {
     password: {
         type: String,
         required: true
-    }
+    },
+    tokens:[{
+        token :{
+            type: String,
+            required:true
+        }
+    }]
 })
 
-//Middleware before SAVE 
+
+//Generate Token
+//userSchema.methods.getPublicProfile = function (){
+userSchema.methods.toJSON = function (){
+
+    const user = this
+    const userObject = user.toObject()
+    
+    delete userObject.password
+    delete userObject.tokens
+
+    return userObject
+
+}
+
+//Generate Token
+userSchema.methods.generateAuthToken = async function (){
+
+    const user = this
+    const token = jwt.sign({_id:user._id.toString()},process.env.JWT_SECRET)
+
+    user.tokens = user.tokens.concat({token})
+    await user.save()
+
+    return token
+
+}
+
+//Middleware
+userSchema.statics.findByCredentials = async (email,password) => {
+
+    const user = await User.findOne({email})
+
+    if(!user){
+        throw new Error("Email not exists")
+    }
+
+    const isMatch = await bcrypt.compare(password,user.password)
+
+    if(!isMatch){
+        throw new Error("Invalid Credential")
+    }
+
+    return user
+
+}
+
+//Middleware (HASH PASWORD BEFORE SAVING)
 userSchema.pre('save', async function (next){
 
     const user = this

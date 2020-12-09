@@ -7,19 +7,16 @@ require('dotenv').config()
 
 //Custem Requirement
 const connectMongo = require('./src/config/mongoose')
+const session = require('./src/Middlewares/Session')
 const userRoutes = require('./src/Routes/User')
 
 let port = process.env.PORT||5000
 
-//Creating instance of express
-const app = express()
+const app = express()               //Creating instance of express
 
-//To recognize the incoming Request Object as a JSON Object
-//Middleware of express
-app.use(express.json())
-
-//Middleware Routes for User
-app.use(userRoutes)
+app.use(express.json())             //To recognize the incoming Request Object as a JSON Object //Express Middleware
+app.use(session)
+app.use('/user',userRoutes)         //Routes for User                                           //Express Middleware
 
 
 //Setting up the Port
