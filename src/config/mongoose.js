@@ -6,7 +6,7 @@ mongoose.connect(process.env.DBPATH, {
     useCreateIndex: true,
     useUnifiedTopology: true
 }).then(()=>{
-    console.log(chalk.green("Successfully connected to MongoDB"))
+    console.log(chalk.green("Successfully connected to "+chalk.yellow("MongoDB")))
 }).catch((error)=>{
     console.log(chalk.red(error))
     console.log("Unable to connect to MongoDB")

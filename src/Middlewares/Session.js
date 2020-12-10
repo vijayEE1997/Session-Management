@@ -1,23 +1,21 @@
-const session = require('express-session')
-const connectRedis = require('connect-redis')
-const redisClient = require('../config/redis')
+const session = require('express-session');
+const redisClient = require('../config/Redis');
+let RedisStore = require('connect-redis')(session)
+var dotenv = require('dotenv')
 
-const redisStore = connectRedis(session)
+const { NODE_ENV = 'devolopment', } = process.env
+const inprod = NODE_ENV === 'production'
 
-const inprod = process.env.NODE_ENV === 'production'
-//configure session middleware
-session({
-    name: "Cookie-SID",
-    key: 'user_sid',
-    store: new redisStore({ client: redisClient }),
-    secret: 'mysecret',
-    saveUninitialized: false,
+module.exports = session({
+    name: "sessionCookie",
+    key: 'sessionKey',
+    store: new RedisStore({ host: process.env.REDIS_IP, port: process.env.REDIS_PORT, client: redisClient }),
+    secret: process.env.REDIS_SECRET,
     resave: false,
+    saveUninitialized: false,
     cookie: {
-        secure: inprod,//for production true
+        maxAge: 1000*60*60, // For an hour in miliseconds
         sameSite: true,
-        maxAge: 1000 * 60 * 30 //half hour
+        secure: inprod
     }
 })
-
-module.exports = session

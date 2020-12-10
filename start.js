@@ -6,18 +6,17 @@ const express = require('express')
 require('dotenv').config()
 
 //Custem Requirement
-const connectMongo = require('./src/config/mongoose')
-const session = require('./src/Middlewares/Session')
+const connectMongo = require('./src/config/Mongoose')
 const userRoutes = require('./src/Routes/User')
+const corsAllow = require('./src/config/CorsAllow')
 
 let port = process.env.PORT||5000
 
 const app = express()               //Creating instance of express
 
 app.use(express.json())             //To recognize the incoming Request Object as a JSON Object //Express Middleware
-app.use(session)
+app.use(corsAllow)
 app.use('/user',userRoutes)         //Routes for User                                           //Express Middleware
-
 
 //Setting up the Port
 app.listen(port,()=>{
