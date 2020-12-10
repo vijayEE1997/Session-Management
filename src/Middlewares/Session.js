@@ -4,7 +4,8 @@ let RedisStore = require('connect-redis')(session)
 var dotenv = require('dotenv')
 
 const { NODE_ENV = 'devolopment', } = process.env
-const inprod = NODE_ENV === 'production'
+const inprod = (NODE_ENV === 'production')
+const domain = (NODE_ENV === 'production')?'.aidatabases.in':'localhost'
 
 module.exports = session({
     name: "sessionCookie",
@@ -14,8 +15,9 @@ module.exports = session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        maxAge: 1000*60*60, // For an hour in miliseconds
+        maxAge: 1000 * 60, // For an hour in miliseconds
         sameSite: true,
-        secure: inprod
+        secure: inprod,
+        domain
     }
 })
