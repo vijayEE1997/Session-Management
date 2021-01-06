@@ -26,6 +26,7 @@ const login = async (req, res) => {
         req.session.userEmail = user.email
         req.session.sessionId = token
 
+        res.cookie("SID",token,{maxAge:1000 * 60})
         res.status(200).send({ user, token })
     }
     catch (error) {
@@ -41,6 +42,7 @@ const logout = async (req, res) => {
         req.session.destroy(function (err) {
         })
         res.clearCookie('sessionCookie')
+        res.clearCookie('SID')
         res.status(200).send()
     }
     catch (error) {
@@ -56,6 +58,7 @@ const logoutAll = async (req, res) => {
         req.session.destroy(function (err) {
         })
         res.clearCookie('sessionCookie')
+        res.clearCookie('SID')
         res.status(200).send()
     }
     catch (error) {

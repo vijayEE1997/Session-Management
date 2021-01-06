@@ -14,7 +14,7 @@ router.post('/register', userController.register)
 router.use(session)
 
 //api to login
-router.post('/login', userController.login)
+router.post('/login',userController.login)
 
 //api to logout
 router.post('/logout', auth, userController.logout)
